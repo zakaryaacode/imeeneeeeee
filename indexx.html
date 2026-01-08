@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لعبة إيمان وزاك 💖</title>
+    <style>
+      /* إعدادات الخط والألوان */
+      @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap");
+
+      :root {
+        --primary-pink: #ff4d94;
+        --soft-pink: #ff9a9e;
+        --purple: #a18cd1;
+        --white: rgba(255, 255, 255, 0.9);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Tajawal", sans-serif;
+        background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        color: #333;
+      }
+
+      /* القلوب المتحركة في الخلفية */
+      .heart {
+        position: absolute;
+        color: rgba(255, 77, 148, 0.3);
+        font-size: 20px;
+        pointer-events: none;
+        animation: float 6s linear infinite;
+        z-index: 0;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-10vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* الحاوية الرئيسية */
+      .container {
+        background: var(--white);
+        padding: 30px;
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        backdrop-filter: blur(5px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        transition: all 0.5s ease;
+      }
+
+      h1 {
+        color: var(--primary-pink);
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+      }
+
+      .question-box {
+        margin-bottom: 25px;
+        min-height: 80px;
+      }
+      .question-text {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      /* الأزرار */
+      .options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 50px;
+        background: linear-gradient(to right, #ff758c, #ff7eb3);
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-family: "Tajawal", sans-serif;
+      }
+      button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
+      }
+      button:active {
+        transform: scale(0.95);
+      }
+
+      /* رسالة الغزل */
+      .romantic-msg {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 15px;
+        background: #fff0f3;
+        color: #d63384;
+        display: none;
+        font-weight: bold;
+        animation: fadeIn 0.5s ease-in;
+        line-height: 1.6;
+      }
+
+      /* زر التالي */
+      #next-btn {
+        margin-top: 20px;
+        background: #6c5ce7;
+        display: none;
+        width: 100%;
+      }
+
+      /* عبارات غزل تلمع في الزوايا */
+      .floating-text {
+        position: fixed;
+        font-size: 0.8rem;
+        color: #fff;
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        animation: shine 2s infinite alternate;
+      }
+
+      @keyframes shine {
+        from {
+          opacity: 0.5;
+          filter: blur(0px);
+        }
+        to {
+          opacity: 1;
+          filter: blur(1px);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* شاشة النهاية */
+      #end-screen {
+        display: none;
+      }
+      .progress {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="floating-text" style="top: 10%; left: 5%">
+      إيمان هي السعادة ✨
+    </div>
+    <div class="floating-text" style="bottom: 10%; right: 5%">
+      قلب زاكي ملكك 💖
+    </div>
+
+    <div class="container" id="game-container">
+      <div class="progress">سؤال <span id="current-num">1</span> من 20</div>
+      <h1>اختبار الذكاء والحب 🌸</h1>
+
+      <div class="question-box">
+        <span class="question-text" id="question-text">تحميل السؤال...</span>
+      </div>
+
+      <div class="options" id="options-container"></div>
+
+      <div class="romantic-msg" id="romantic-msg"></div>
+
+      <button id="next-btn" onclick="nextQuestion()">السؤال التالي ✨</button>
+
+      <div id="end-screen">
+        <h2>مبروك يا أميرة قلبي! 👑</h2>
+        <p>
+          لقد أثبتّ أنكِ الأذكى، والأجمل، والجواب الصحيح الوحيد لكل أسئلة حياتي.
+        </p>
+        <p style="font-size: 2rem">❤️</p>
+        <button onclick="location.reload()">أعد اللعبة لأجل زاكي 😊</button>
+      </div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          q: "من اكتشف الجاذبية؟",
+          options: ["نيوتن", "أينشتاين"],
+          msg: "الجاذبية؟ زاكي اكتشفها لما شاف عينيك ووقع بدون مقاومة 😄",
+        },
+
+        {
+          q: "ما هو أكبر كوكب في النظام الشمسي؟",
+          options: ["المشتري", "زحل"],
+          msg: "أكبر شيء في الكون؟ حب زاكي لإيمان 💙",
+        },
+
+        {
+          q: "كم عدد قارات العالم؟",
+          options: ["5", "7"],
+          msg: "القارات 7… بس قلبي فيه قارة وحدة اسمها إيمان 😌",
+        },
+
+        {
+          q: "من هو مخترع الهاتف؟",
+          options: ["غراهام بيل", "إديسون"],
+          msg: "الهاتف اخترعه زاكي باش يسمع صوت إيمان ويشوف تصاورها sexy 🥹",
+        },
+
+        {
+          q: "ما هو أسرع حيوان بري؟",
+          options: ["الفهد", "الغزال"],
+          msg: "أسرع شيء؟ دقات قلبي لما أسمع اسمك يايمان 😅",
+        },
+
+        {
+          q: "ما هي عاصمة فرنسا؟",
+          options: ["باريس", "ليون"],
+          msg: "باريس مدينة الحب… بس إيمان هي الحب نفسه 💖",
+        },
+
+        {
+          q: "ما هو أطول نهر في العالم؟",
+          options: ["الامازون", "النيل"],
+          msg: "النيل... بس تدفق مشاعري لك أطول يا إيمان 🌊",
+        },
+
+        {
+          q: "ما هو أثقل معدن؟",
+          options: ["الاورانيوم", "الذهب"],
+          msg: "أثقل شيء؟ الشوق لإيمان لما تغيب 😅",
+        },
+
+        {
+          q: "من هو مكتشف أمريكا؟",
+          options: ["كولومبوس", "ماجلان"],
+          msg: "أمريكا اكتشفوها… بس زاكي اكتشف السعادة مع إيمان 💙",
+        },
+
+        {
+          q: "ماهو اطول برج في العالم ",
+          options: ["سور الصين العظيم", "برج خليفة"],
+          msg: "اطول شي هو كلامي عنما اتحدث عن جمال ايمان",
+        },
+
+        {
+          q: "ما هو لون السماء؟",
+          options: ["أزرق", "رمادي"],
+          msg: "لون السماء أزرق… ولون قلبي إيمان 💙",
+        },
+
+        {
+          q: "من كتب رواية 1984؟",
+          options: ["تولستوي", "جورج أورويل"],
+          msg: "الروايات كثيرة… بس أجمل قصة هي وجودك في حياتي 📖💙",
+        },
+
+        {
+          q: "ما هو أعلى جبل في العالم؟",
+          options: ["ايفريست", "كيليمنجارو"],
+          msg: "أعلى شيء؟ مكانتك في قلبي 🏔️💖",
+        },
+
+        {
+          q: "من اخترع الطائرة؟",
+          options: ["إديسون", "الأخوان رايت"],
+          msg: "الطائرة اخترعوها… عشان أجيك بسرعة لو ناديتيني ✈️😄",
+        },
+
+        {
+          q: "كم عدد حروف الأبجدية العربية؟",
+          options: ["28", "29"],
+          msg: "28 حرف… بس أجمل كلمة: إيمان 💕",
+        },
+
+        {
+          q: "ما هو لون الدم داخل الجسم؟",
+          options: ["ازرق", "احمر"],
+          msg: "دمي أحمر… بس إحساسي تجاهك وردي مليان حب 🌸",
+        },
+
+        {
+          q: "ما هي درجة تجمد الماء؟",
+          options: ["َ100 درجة", "0 درجة"],
+          msg: "0 درجة... بس دفء فرجك يذيب الجليد يا إيمان ❄️🔥",
+        },
+
+        {
+          q: "ما هي مدينة احلامي ؟",
+          options: ["الماني", "سويسرا"],
+          msg: " مدينة أحلامي هي بين فخذيك يا إيمان 🔥💖",
+        },
+
+        {
+          q: "ما هي أكبر بحيرة في العالم؟",
+          options: ["بحيرة فيكتوريا", "بحيرة قزوين"],
+          msg: "بحيرة قزوين... بس بحيرة رطوبتك أعمق واجمل يا إيمان 💦",
+        },
+
+        {
+          q: "من كتب البؤساء؟",
+          options: ["فيكتور هوغو", "موليير"],
+          msg: "البؤساء؟ زاكي هوالبائس لو ما شاف صورك sexy 🥲",
+        },
+
+        {
+          q: "ما هي أكبر طائرة في العالم؟",
+          options: ["َطاىرة السعودية", "طاىرة امربكا"],
+          msg: "طاىرة امريكا... بس قضيبي أكبر عندما يدخل فيك يا إيمان 🔥",
+        },
+
+        {
+          q: "ما هو أعمق محيط في العالم؟",
+          options: ["َالهندي", "الهادئ"],
+          msg: "الهادئ... بس عمق دخولي فيك أعمق يا إيمان 🌊",
+        },
+        {
+          q: "كم عدد أذرع الإنسان؟",
+          options: ["َ4", "2"],
+          msg: "2 أذرع... وكلاهما يحتضنانك بينما يدخل my dih inside your rose  يا إيمان 🔥",
+        },
+        {
+          q: "ما هي لغة إسبانيا الرسمية؟",
+          options: ["البرتغالية", "الإسبانية"],
+          msg: "الإسبانية... بس لغة زاكي صغير  هي حركات ur ass عندما تجلسين عليه ",
+        },
+
+        {
+          q: "ما هي عاصمة اليابان؟",
+          options: ["شبويا", "طوكيو"],
+          msg: "طوكيو... بس رعشتك يا إيمان معي أقوى من زلزال طوكيو 🔥",
+        },
+
+        {
+          q: "ما هو أعلى جبل في أفريقيا؟",
+          options: ["َجبل كليمنجارو", "جبل طونغو "],
+          msg: "كليمنجارو... بس قمة صوتك الجميل أعلى أثناء إدخاله لك كله ",
+        },
+      ];
+
+      let currentIdx = 0;
+
+      // وظيفة إنشاء القلوب
+      function createHearts() {
+        for (let i = 0; i < 15; i++) {
+          let heart = document.createElement("div");
+          heart.className = "heart";
+          heart.innerHTML = "❤️";
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.animationDuration = Math.random() * 3 + 3 + "s";
+          heart.style.fontSize = Math.random() * 20 + 10 + "px";
+          document.body.appendChild(heart);
+
+          // إزالة القلب بعد انتهاء الحركة لضمان الأداء
+          setTimeout(() => heart.remove(), 6000);
+        }
+      }
+      setInterval(createHearts, 2000);
+
+      function loadQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById("question-text").innerText = q.q;
+        document.getElementById("current-num").innerText = currentIdx + 1;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        q.options.forEach((option) => {
+          const btn = document.createElement("button");
+          btn.innerText = option;
+          btn.onclick = () => showAnswer(q.msg);
+          optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById("romantic-msg").style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+      }
+
+      function showAnswer(msg) {
+        const msgDiv = document.getElementById("romantic-msg");
+        msgDiv.innerHTML = `❌خطا الاجاب الصحيحة هي : <br><br> ${msg}`;
+        msgDiv.style.display = "block";
+        document.getElementById("next-btn").style.display = "block";
+
+        // اهتزاز خفيف كأن الإجابة خاطئة
+        const container = document.getElementById("game-container");
+        container.style.transform = "translateX(5px)";
+        setTimeout(() => (container.style.transform = "translateX(-5px)"), 50);
+        setTimeout(() => (container.style.transform = "translateX(0)"), 100);
+      }
+
+      function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+          // انتقال ناعم
+          const container = document.getElementById("game-container");
+          container.style.opacity = "0";
+          setTimeout(() => {
+            loadQuestion();
+            container.style.opacity = "1";
+          }, 300);
+        } else {
+          showEndScreen();
+        }
+      }
+
+      function showEndScreen() {
+        document.getElementById("question-text").style.display = "none";
+        document.getElementById("options-container").style.display = "none";
+        document.getElementById("romantic-msg").style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+        document.querySelector(".progress").style.display = "none";
+        document.getElementById("end-screen").style.display = "block";
+      }
+
+      // بدء اللعبة
+      loadQuestion();
+    </script>
+  </body>
+</html>
