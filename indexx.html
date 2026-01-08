@@ -52,11 +52,11 @@
       /* الحاوية الرئيسية */
       .container {
         background: var(--white);
-        padding: 30px;
+        padding: 20px;
         border-radius: 25px;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        width: 90%;
-        max-width: 500px;
+        width: 80%;
+        max-width: 320px;
         text-align: center;
         position: relative;
         z-index: 10;
@@ -176,7 +176,7 @@
       إيمان هي السعادة ✨
     </div>
     <div class="floating-text" style="bottom: 10%; right: 5%">
-      قلب زاكي ملكك 💖
+       قلب زاكي ملكك وانت ملكي 💖
     </div>
 
     <div class="container" id="game-container">
@@ -196,7 +196,7 @@
       <div id="end-screen">
         <h2>مبروك يا أميرة قلبي! 👑</h2>
         <p>
-          لقد أثبتّ أنكِ الأذكى، والأجمل، والجواب الصحيح الوحيد لكل أسئلة حياتي.
+          لقد أثب أنك الأذكى، والأجمل، والجواب الصحيح الوحيد لكل أسئلة حياتي.
         </p>
         <p style="font-size: 2rem">❤️</p>
         <button onclick="location.reload()">أعد اللعبة لأجل زاكي 😊</button>
@@ -416,7 +416,7 @@
 
       function showAnswer(msg) {
         const msgDiv = document.getElementById("romantic-msg");
-        msgDiv.innerHTML = `❌خطا الاجاب الصحيحة هي : <br><br> ${msg}`;
+        msgDiv.innerHTML = `❌خطا الاجابة الصحيحة هي : <br><br> ${msg}`;
         msgDiv.style.display = "block";
         document.getElementById("next-btn").style.display = "block";
 
